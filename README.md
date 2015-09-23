@@ -3,7 +3,7 @@ Project #5 for the Udacity Full Stack Web Developer Nanodegree
 
 ### About
 
-For the my Udacity nanodegree project, I configured a linux web server and deployed my catalog app from [project #3](https://github.com/sgreenlee/Item-Catalog).
+For the final Udacity nanodegree project, I configured a linux web server and deployed my catalog app from [project #3](https://github.com/sgreenlee/Item-Catalog).
 
 ### Configuration details
 
@@ -74,7 +74,7 @@ $ sudo ufw enable
 
 ##### Installing and configuring fail2ban
 
-To protect against bruce attacks I installed fail2ban, a software package that blocks ip addresses with multiple failed login attempts within a certain amount of time. I installed fail2ban from apt-get:
+To protect against brute force attacks I installed fail2ban, a software package that blocks ip addresses with multiple failed login attempts within a certain amount of time. I installed fail2ban from apt-get:
 
 ```
 $ sudo apt-get install fail2ban
