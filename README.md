@@ -9,9 +9,17 @@ For the my Udacity nanodegree project, I configured a linux web server and deplo
 
 Here are the steps I took to secure the server and get my application running.
 
+#####Upgrading software
+
+After logging in to the server, the first thing I did was update all installed software packages:
+```
+$ apt-get update
+$ apt-get upgrade
+```
+
 #####Creating new users and configuring ssh
 
-After logging into the server as root, my first order of business was to create the appropriate users, give them sudo priveleges and allow them to ssh into the server. First, I added the new users:
+My next order of business was to create the appropriate users, give them sudo priveleges and allow them to ssh into the server. First, I added the new users:
 
 ```
 $ adduser {newuser}
