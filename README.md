@@ -3,7 +3,7 @@ Project #5 for the Udacity Full Stack Web Developer Nanodegree
 
 ### About
 
-For the final Udacity nanodegree project, I configured a linux web server and deployed my catalog app from [project #3](https://github.com/sgreenlee/Item-Catalog).
+For the final	 Udacity nanodegree project, I configured a linux web server and deployed my catalog app from [project #3](https://github.com/sgreenlee/Item-Catalog).
 
 ### Configuration details
 
@@ -19,7 +19,7 @@ $ apt-get upgrade
 
 #####Creating new users and configuring ssh
 
-My next order of business was to create the appropriate users, give them sudo priveleges and allow them to ssh into the server. First, I added the new users:
+My next order of business was to create the appropriate users, give them sudo privileges and allow them to ssh into the server. First, I added the new users:
 
 ```
 $ adduser {newuser}
