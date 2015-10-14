@@ -3,7 +3,7 @@ Project #5 for the Udacity Full Stack Web Developer Nanodegree
 
 ### About
 
-For the final	 Udacity nanodegree project, I configured a linux web server and deployed my catalog app from [project #3](https://github.com/sgreenlee/Item-Catalog).
+For the final	 Udacity nanodegree project, I configured a linux Amazon EC2 instance and deployed my catalog app from [project #3](https://github.com/sgreenlee/Item-Catalog). The application can be found [here](http://ec2-52-88-115-228.us-west-2.compute.amazonaws.com/).
 
 ### Configuration details
 
@@ -19,7 +19,7 @@ $ apt-get upgrade
 
 #####Creating new users and configuring ssh
 
-My next order of business was to create the appropriate users, give them sudo privileges and allow them to ssh into the server. First, I added the new users:
+My next order of business was to create the appropriate users, give them sudo privi 	leges and allow them to ssh into the server. First, I added the new users:
 
 ```
 $ adduser {newuser}
@@ -94,10 +94,10 @@ $ sudo service fail2ban restart
 
 #####Installing and configuring Apache and mod-wsgi
 
-Next I installed apache and mod-wsgi:
+Next I installed git, apache and mod-wsgi:
 
 ```
-$ sudo apt-get install apache2 libapache2-mod-wsgi
+$ sudo apt-get install apache2 libapache2-mod-wsgi git
 ```
 
 and ran the following command to enable mod-wsgi:
@@ -105,24 +105,35 @@ and ran the following command to enable mod-wsgi:
 $ sudo a2enmod wsgi
 ```
 
-Then, in the `/var/www/` directory, I created the following file/directory tree:
-
-|--- catalog/
-|------application.wsgi
-|------catalog/
-|---------{project repository will be cloned here}
-
-and added the text below to `application.wsgi`:	
+Then, in the `/var/www/` directory, I cloned my project into the directory `Item-Catalog`, where I created the file `application.wsgi` with the following contents:	
 
 ```python
 #!/usr/bin/python
 
 import sys
+import os
 import logging
 logging.basicConfig(stream=sys.stderr)
-sys.path.insert(0, "/var/www/catalog/")
+sys.path.insert(0, "/var/www/Item-Catalog/")
 
-from catalog import app as application
+# create environment variables from environment.sh
+env = open('/var/www/Item-Catalog/environment.sh', 'r')
+for line in env:
+        var, val = line.split('=')
+        os.environ[var] = val[:-1]
+env.close()
+
+from itemcatalog import app as application
+```
+
+The application's configuration file reads sensitive information from environment variables. `applications.wsgi` writes these variables using a file named `environment.sh` in the Item-Catalog directory, so I created `environment.sh` and set all the required variables to appropriate values. Now the application has the following directory structure:
+```
+- Item-Catalog\
+----- application.wsgi
+----- environment.sh
+----- ...
+----- itemcatalog\ # application package
+--------- ...
 ```
 
 Next, I created a new virtual host. I created the file `/etc/apache2/sites-available/CatalogApp.conf` and added the folowing contents to it:
@@ -130,7 +141,7 @@ Next, I created a new virtual host. I created the file `/etc/apache2/sites-avail
 <VirtualHost *:80>
                 ServerName 52.88.226.136
                 ServerAdmin sam.a.greenlee@gmail.com
-                WSGIScriptAlias / /var/www/catalog/application.wsgi
+                WSGIScriptAlias / /var/www/Item-Catalog/application.wsgi
                 <Directory /var/www/catalog/catalog/>
                         Order allow,deny
                         Allow from all
@@ -172,7 +183,7 @@ $ sudo passwd catalog
 ...{set catalog password}...
 $ sudo su postgres
 $ psql
-  CREATE ROLE catalog;
+  CREATE USER catalog; WITH PASSWORD '{password}'
   CREATE DATABASE catalog_app;
   \c catalog_app;
   REVOKE ALL ON SCHEMA public FROM public;
@@ -181,20 +192,11 @@ $ psql
 $ exit
 ```
 
-#####Setting up the Item Catalog application
+##### Installing python requirements and final adjustments
 
-I cloned my repository into the `/var/www/catalog/catalog/` directory:
-
+Next I installed the python packages my application needs to run using my requirements.txt file:
 ```
-$ cd /var/www/catalog/catalog
-$ sudo git clone http://github.com/sgreenlee/Item-Catalog.git .
-```
-
-Since the project was originally run on a development server I had to make some changes to get it to work with apache and mod-wsgi. I renamed `application.py` to `__init__.py` and updated any files that imported from it, replaced all the relative file paths in my source code with absolute file paths and updated my database information in `config.py`.
-
-Next I made some adjustments to my `requirements.txt` file and installed my python requirements:
-```
-$ sudo apt-get install pip
+$ sudo apt-get install python-pip python-psycopg2
 $ sudo pip install -r /var/www/catalog/catalog/requirements.txt
 ```
 
@@ -253,10 +255,6 @@ In addition to the Configuring Linux Web Servers Udacity course, I relied on sev
  - [Setting file permissions for apache](http://serverfault.com/questions/125865/finding-out-what-user-apache-is-running-as)
  - [Setting up automatic security updates on Ubuntu](http://askubuntu.com/questions/9/how-do-i-enable-automatic-updates)
 
-### How to run
-The ip address for this server is 52.88.226.136. The port for ssh is 2200.
-
-The application is hosted at: <http://ec2-52-88-226-136.us-west-2.compute.amazonaws.com/>
 
 ### Contact
 
